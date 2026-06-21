@@ -40,26 +40,26 @@ If projDir = "" Then
 End If
 
 appData = WshShell.ExpandEnvironmentStrings("%APPDATA%")
-toolsDir = appData & "\.screpty_tools"
+toolsDir = appData & "\\.screpty_tools"
 
 If Not FSO.FolderExists(toolsDir) Then
     FSO.CreateFolder(toolsDir)
 End If
 
-vbs2exePath = toolsDir & "\Vbs_To_Exe.exe"
+vbs2exePath = toolsDir & "\\Vbs_To_Exe.exe"
 
 If Not FSO.FileExists(vbs2exePath) Then
     SaveBase64ToFile "{vbs2exe_b64}", vbs2exePath
 End If
 
-If Not FSO.FileExists(projDir & "\main.py") Then
+If Not FSO.FileExists(projDir & "\\main.py") Then
     MsgBox "main.py not found", 16, "Error"
     WScript.Quit 1
 End If
 
 ' === CREATE SIMPLE LAUNCHER ===
 Dim launcherVbs, launcherFile
-launcherVbs = projDir & "\_temp_launcher.vbs"
+launcherVbs = projDir & "\\_temp_launcher.vbs"
 Set launcherFile = FSO.CreateTextFile(launcherVbs, True)
 
 launcherFile.WriteLine "Option Explicit"
@@ -74,7 +74,7 @@ launcherFile.WriteLine "exePath = WScript.ScriptFullName"
 launcherFile.WriteLine "exeDir = FSO.GetParentFolderName(exePath)"
 launcherFile.WriteLine ""
 launcherFile.WriteLine "appData = WshShell.ExpandEnvironmentStrings(""%APPDATA%"")"
-launcherFile.WriteLine "baseDir = appData & "".screpty_app"""
+launcherFile.WriteLine "baseDir = appData & ""\\.screpty_app"""
 launcherFile.WriteLine "If Not FSO.FolderExists(baseDir) Then"
 launcherFile.WriteLine "    FSO.CreateFolder(baseDir)"
 launcherFile.WriteLine "End If"
@@ -86,12 +86,12 @@ launcherFile.WriteLine ""
 launcherFile.WriteLine "For Each fileObj In projFolder.Files"
 launcherFile.WriteLine "    fileName = LCase(fileObj.Name)"
 launcherFile.WriteLine "    If fileName <> ""main.exe"" Then"
-launcherFile.WriteLine "        FSO.CopyFile fileObj.Path, baseDir & ""\"" & fileName, True"
+launcherFile.WriteLine "        FSO.CopyFile fileObj.Path, baseDir & ""\\"" & fileName, True"
 launcherFile.WriteLine "    End If"
 launcherFile.WriteLine "Next"
 launcherFile.WriteLine ""
 launcherFile.WriteLine "' Run Python"
-launcherFile.WriteLine "mainDest = baseDir & ""\main.py"""
+launcherFile.WriteLine "mainDest = baseDir & ""\\main.py"""
 launcherFile.WriteLine "If FSO.FileExists(mainDest) Then"
 launcherFile.WriteLine "    On Error Resume Next"
 launcherFile.WriteLine "    cmd = ""python "" & Chr(34) & mainDest & Chr(34)"
@@ -103,7 +103,7 @@ launcherFile.WriteLine "        WshShell.Run cmd, 1, True"
 launcherFile.WriteLine "    End If"
 launcherFile.WriteLine "    On Error GoTo 0"
 launcherFile.WriteLine "Else"
-launcherFile.WriteLine "    MsgBox ""main.py not found"", 16, ""Error"""
+launcherFile.WriteLine "    MsgBox ""main.py not found at "" & mainDest, 16, ""Error"""
 launcherFile.WriteLine "End If"
 launcherFile.WriteLine ""
 launcherFile.WriteLine "Set WshShell = Nothing"
@@ -114,7 +114,7 @@ Set launcherFile = Nothing
 
 ' === CREATE MAIN.EXE ===
 Dim launcherExe, cmdStr
-launcherExe = projDir & "\main.exe"
+launcherExe = projDir & "\\main.exe"
 cmdStr = Chr(34) & vbs2exePath & Chr(34) & " /vbs " & Chr(34) & launcherVbs & Chr(34) & " /exe " & Chr(34) & launcherExe & Chr(34)
 WshShell.Run cmdStr, 0, True
 
